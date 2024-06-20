@@ -20,7 +20,11 @@ import { defineChain } from "thirdweb/chains";
 import { sendTransaction } from "thirdweb";
 import { claimTo } from "thirdweb/extensions/erc1155";
 import { prepareContractCall } from "thirdweb";
-import { useSendTransaction } from "thirdweb/react";
+import {
+  useSendTransaction,
+  TransactionButton,
+  useActiveAccount,
+} from "thirdweb/react";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 
 const StyledButton = styled.button`
@@ -86,13 +90,15 @@ const ClaimTokens = ({ claim_signer }: any) => {
 
   const sdk = new ThirdwebSDK(claim_signer);
 
-  const contractAddress = "0x5dabeEBc71B75fb9681D67CC4aeB654c6c858126";
+  //const contractAddress = "0x5dabeEBc71B75fb9681D67CC4aeB654c6c858126";
 
-  console.log("sdk", sdk);
+  //console.log("sdk", sdk);
 
   const client = createThirdwebClient({
     clientId: "6f548b049f47f192d385041415b48f24",
   });
+
+  const account = useActiveAccount();
 
   const address = useAddress();
   // connect to your contract
@@ -113,6 +119,8 @@ const ClaimTokens = ({ claim_signer }: any) => {
   //console.log("contract", contract);
 
   let test = async () => {
+    console.log(TransactionButton);
+    /*
     const erc1155 = await sdk.getContract(contractAddress);
     console.log("erc1155", erc1155);
     let currency = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
@@ -135,13 +143,12 @@ const ClaimTokens = ({ claim_signer }: any) => {
     ]);
     const receipt = tx.receipt;
     console.log("receipt", receipt);
+    */
     //const claimTransaction = await erc1155.claim(0, 1);
     //const receipt = await claimTransaction.wait(); // Wait for the transaction to be mined
-
     //const mintTransaction = await erc1155.mintTo(address, 0, 1);
     //const receipt = await mintTransaction.wait();
     //console.log("Token claimed successfully!", receipt);
-
     //console.log(ThirdwebSDK);
     //console.log(claim);
     //claim({ to: address, quantity: 1, tokenId: 0 });
@@ -157,7 +164,21 @@ const ClaimTokens = ({ claim_signer }: any) => {
     */
   };
 
-  return <StyledButton onClick={test}>Claim Membership</StyledButton>;
+  return (
+    <TransactionButton
+      transaction={() =>
+        claimTo({
+          contract,
+          to: account?.address as string,
+          quantity: BigInt(1),
+          tokenId: BigInt(0),
+        })
+      }
+    >
+      Claim Membership
+    </TransactionButton>
+  );
+  //return <StyledButton onClick={test}>Claim Membership</StyledButton>;
   /*
     <Web3Button
       contractAddress={idNFT}
