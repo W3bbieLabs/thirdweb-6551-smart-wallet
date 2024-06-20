@@ -22,7 +22,7 @@ export default function newSmartWallet(token: NFT) {
         chain: activeChain, // the chain where your smart wallet will be or is deployed
         factoryAddress: factoryAddress, // your own deployed account factory address
         clientId: clientId, // Use client id if using on the client side, get it from dashboard settings
-        secretKey: TWApiKey, // Use secret key if using on the server, get it from dashboard settings
+        //secretKey: TWApiKey, // Use secret key if using on the server, get it from dashboard settings
         gasless: true, // enable or disable gasless transactions
         entryPointAddress: entryPoint,// adding this made an error related to failure to load contract go away
         factoryInfo: {
