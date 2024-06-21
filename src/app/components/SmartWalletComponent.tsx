@@ -1,3 +1,4 @@
+"use client";
 import {
   ThirdwebNftMedia,
   useWallet,
@@ -26,6 +27,7 @@ import {
   useActiveAccount,
 } from "thirdweb/react";
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
+import { clientId } from "../const/constants";
 
 const StyledButton = styled.button`
   background-color: #007bff;
@@ -49,10 +51,17 @@ export default function SmartWalletComponent({ signer }: any) {
   const [isClaiming, setIsClaiming] = useState(false);
 
   return (
-    <ThirdwebSDKProvider signer={signer} activeChain={BaseSepoliaTestnet}>
+    <ThirdwebSDKProvider
+      signer={signer}
+      activeChain={BaseSepoliaTestnet}
+      clientId={clientId}
+    >
       <div>Smart Wallet stuff here</div>
       <div>{idNFT}</div>
+
+      {/*
       <ClaimTokens claim_signer={signer} />
+  */}
     </ThirdwebSDKProvider>
   );
 }
@@ -166,19 +175,22 @@ const ClaimTokens = ({ claim_signer }: any) => {
 
   return (
     <TransactionButton
-      transaction={() =>
+      transaction={() => {
+        console.log(account?.address);
         claimTo({
           contract,
           to: account?.address as string,
-          quantity: BigInt(1),
-          tokenId: BigInt(0),
-        })
-      }
+          quantity: 1n,
+          tokenId: 0n,
+        });
+      }}
     >
       Claim Membership
     </TransactionButton>
+
+    /*<StyledButton onClick={test}>Claim Membership</StyledButton>*/
   );
-  //return <StyledButton onClick={test}>Claim Membership</StyledButton>;
+
   /*
     <Web3Button
       contractAddress={idNFT}
