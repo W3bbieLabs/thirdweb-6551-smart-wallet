@@ -8,21 +8,17 @@ import React from "react";
 import { useState } from "react";
 import newSmartWallet from "./SmartWallet";
 import styled from "styled-components";
-import SmartWalletComponent from "./SmartWalletComponent";
-import { BaseSepoliaTestnet } from "@thirdweb-dev/chains";
 import { clientId } from "../const/constants";
-
-import { claimTo } from "thirdweb/extensions/erc1155";
+//import { claimTo } from "thirdweb/extensions/erc1155";
 import { Signer } from "ethers";
 import { getContract, createThirdwebClient } from "thirdweb";
 import { defineChain } from "thirdweb/chains";
-//import { TransactionButton, useActiveAccount } from "thirdweb/react";
 import { prepareContractCall, sendTransaction } from "thirdweb";
-import { useActiveWallet } from "thirdweb/react";
+//import { useActiveWallet } from "thirdweb/react";
 import { ThirdwebProvider as ThirdwebProviderV5 } from "thirdweb/react";
-import { createWallet, injectedProvider } from "thirdweb/wallets";
-
-//import { SmartWallet } from "@thirdweb-dev/react";
+import { WalletId, createWallet, injectedProvider } from "thirdweb/wallets";
+import { claim2, get_wallet_id } from "../const/utils";
+import { allow_list } from "../const/constants";
 
 const StyledButton = styled.button`
   background-color: #007bff;
@@ -43,8 +39,8 @@ type Props = {
 };
 
 export default function NFTComponent({ nft }: Props) {
-  const [isClaiming, setIsClaiming] = useState(false);
-  const [smartWalletObject, setSmartWalletObject] = useState<any>(undefined);
+  //const [isClaiming, setIsClaiming] = useState(false);
+  //const [smartWalletObject, setSmartWalletObject] = useState<any>(undefined);
   const [smartWalletAddress, setSmartWalletAddres] = useState<
     string | undefined
   >(undefined);
@@ -66,7 +62,7 @@ export default function NFTComponent({ nft }: Props) {
       return;
     }
     let smartWallet = newSmartWallet(nft);
-    setSmartWalletObject(smartWallet);
+    //setSmartWalletObject(smartWallet);
     let _account = await smartWallet.connect({ personalWallet: wallet });
     let _signer = await smartWallet.getSigner();
     let smart_wallet_address = await smartWallet.getAddress();
@@ -75,28 +71,15 @@ export default function NFTComponent({ nft }: Props) {
     claimToken(smartWallet, smart_wallet_address, _account);
   };
 
-  let blah = async () => {
-    console.log("blah");
-  };
-
   let claimToken = async (_wallet: any, _address: any, _account: any) => {
     const client = createThirdwebClient({ clientId });
 
-    const metamask = createWallet("io.metamask"); // pass the wallet id
+    let wallet_type: WalletId = (await get_wallet_id()) as WalletId;
+    const metamask = createWallet(wallet_type); // pass the wallet id
 
     // if user has metamask installed, connect to it
-    if (injectedProvider("io.metamask")) {
+    if (injectedProvider(wallet_type)) {
       let _account = await metamask.connect({ client });
-      console.log(_account);
-
-      console.log("claiming token");
-      let allow_list = [
-        ["0x0000000000000000000000000000000000000000000000000000000000000000"],
-        "115792089237316195423570985008687907853269984665640564039457584007913129639935",
-        "0",
-        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-      ];
-
       const tx = prepareContractCall({
         contract,
         // Pass the method signature that you want to call
@@ -112,7 +95,6 @@ export default function NFTComponent({ nft }: Props) {
           "0x",
         ],
       });
-      //console.log("tx", tx);
 
       const transactionResult = await sendTransaction({
         transaction: tx,
@@ -134,9 +116,7 @@ export default function NFTComponent({ nft }: Props) {
         </StyledButton>
       ) : (
         <div>
-          <ThirdwebProviderV5>
-            <StyledButton onClick={blah}>Claim Token2</StyledButton>
-          </ThirdwebProviderV5>
+          <ThirdwebProviderV5></ThirdwebProviderV5>
         </div>
       )}
     </div>
