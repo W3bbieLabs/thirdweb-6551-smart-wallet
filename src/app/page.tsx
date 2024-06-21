@@ -1,92 +1,71 @@
 "use client";
-import Image from "next/image";
 import {
-  ConnectWallet,
-  Web3Button,
   useContract,
   useOwnedNFTs,
   useAddress,
-  ChainId,
-  useWallet,
-  useConnect,
+  ConnectWallet,
 } from "@thirdweb-dev/react";
-import thirdwebIcon from "@public/thirdweb.svg";
-import { client } from "./client";
-import newSmartWallet from "./components/SmartWallet";
-import { useState } from "react";
-import { Signer } from "ethers";
-import { LocalWallet } from "@thirdweb-dev/wallets";
 import NFTComponent from "./components/NFT";
-
 import {
-  implementation,
-  nftDropAddress,
-  activeChain,
-  factoryAddress,
-  TWApiKey,
-} from "./const/constants";
+  ConnectButton,
+  useActiveWallet,
+  useActiveAccount,
+} from "thirdweb/react";
+import { nftDropAddress, client, wallets } from "./const/constants";
+import { ThirdwebProvider as ThirdwebProviderV5 } from "thirdweb/react";
+import { NFT } from "@thirdweb-dev/react";
 
 export default function Home() {
-  const [smartWalletAddress, setSmartWalletAddres] = useState<
-    string | undefined
-  >(undefined);
-  const [signer, setSigner] = useState<Signer>();
-
   const address = useAddress();
-  const mm_wallet = useWallet();
 
-  const {
-    contract,
-    isLoading: isLoadUseContract,
-    error,
-  } = useContract(nftDropAddress);
-
+  console.log("address", address);
+  //const wallet = useActiveWallet();
+  //const activeAccount = useActiveAccount();
+  const { contract } = useContract(nftDropAddress);
   const { data: nfts, isLoading: useOwnedIsLoading } = useOwnedNFTs(
     contract,
     address
   );
 
-  let test = async () => {
-    let nft = nfts ? nfts[0] : null;
-    console.log("nft", nft);
-    if (nft) {
-      const smartWallet = newSmartWallet(nft);
-      await smartWallet.connect({ personalWallet: mm_wallet });
-      let _signer = await smartWallet.getSigner();
-      let smart_wallet_address = await smartWallet.getAddress();
-      setSigner(_signer);
-      setSmartWalletAddres(smart_wallet_address);
-      console.log("smartWallet", smartWallet);
-      console.log("signer", _signer);
-      console.log("smart_wallet_address", smart_wallet_address);
+  let showNFTS = (nfts: NFT[]) => {
+    console.log("nfts", nfts);
+    if (nfts?.length > 0) {
+      return nfts.map((nft) => {
+        return <NFTComponent key={nft.metadata.id} nft={nft} />;
+        //return <div>hi</div>;
+      });
+    } else {
+      return (
+        <div>
+          You do not own a Membership Token. Click{" "}
+          <a
+            href="https://avatar-basedart.vercel.app/"
+            target="_blank"
+            className="text-blue-600"
+          >
+            here
+          </a>{" "}
+          to claim a membership token.
+        </div>
+      );
     }
   };
 
   return (
     <main className="p-4 pb-10 min-h-[100vh] flex items-center justify-center container max-w-screen-lg mx-auto">
       <div className="py-20">
-        <div className="flex justify-center mb-20">
+        <div className="flex justify-center mb-10">
           <ConnectWallet />
+          {/*
+          <ThirdwebProviderV5>
+            <ConnectButton client={client} wallets={wallets} />
+          </ThirdwebProviderV5>
+        */}
         </div>
         <div
           style={{ width: "100%", display: "flex", justifyContent: "center" }}
         >
-          {nfts
-            ? nfts.map((nft) => (
-                <div key={nft.metadata.id}>
-                  <NFTComponent nft={nft} />
-                </div>
-              ))
-            : null}
-          {/*
-          <Web3Button
-            contractAddress={nftDropAddress}
-            action={(contract) => contract.erc721.claim(1)}
-            style={{ marginLeft: "auto", marginRight: "auto" }}
-          >
-            Claim NFT
-          </Web3Button>
-    */}
+          {showNFTS(nfts || [])}
         </div>
       </div>
     </main>

@@ -4,18 +4,16 @@ import {
     implementation,
     nftDropAddress,
     factoryAddress,
-    TWApiKey,
     clientId,
     entryPoint
 } from "../const/constants";
 import { ethers } from "ethers";
-import { WalletOptions, SmartWallet } from "@thirdweb-dev/wallets";
+import { SmartWallet } from "@thirdweb-dev/wallets";
 import { BaseSepoliaTestnet } from "@thirdweb-dev/chains";
 
 export default function newSmartWallet(token: NFT) {
     //Smart Wallet config object
     const activeChain = BaseSepoliaTestnet
-    console.log("newSmartWallet")
     console.log(factoryAddress, implementation, activeChain.chainId, nftDropAddress, token.metadata.id)
 
     const config = {
