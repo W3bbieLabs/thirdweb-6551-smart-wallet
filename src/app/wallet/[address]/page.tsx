@@ -164,9 +164,9 @@ export default function WalletPage({ params }: { params: { address: string } }) 
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <main className="flex flex-col items-center p-8">
         <div className="flex w-full max-w-5xl space-x-8">
-          <div className="flex-shrink-0 w-64 h-64 bg-gray-300 rounded-lg">
+          <div className="flex-shrink-0 bg-gray-300 rounded-lg">
             {nft ? (
-              <ThirdwebNftMedia metadata={nft.metadata} className="w-full h-full object-cover rounded-lg" />
+              <ThirdwebNftMedia metadata={nft.metadata} className="w-full h-full rounded-lg" style={{ objectFit: 'cover' }}/>
             ) : (
               <img src="/placeholder.svg" alt="NFT Image" className="w-full h-full rounded-lg" />
             )}
