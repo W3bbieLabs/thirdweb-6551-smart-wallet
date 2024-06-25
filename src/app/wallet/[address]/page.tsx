@@ -162,16 +162,16 @@ export default function WalletPage({ params }: { params: { address: string } }) 
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <main className="flex flex-col items-center p-8">
-        <div className="flex w-full max-w-5xl space-x-8">
-          <div className="flex-shrink-0 bg-gray-300 rounded-lg">
+      <main className="flex flex-col items-center p-4 md:p-8">
+        <div className="flex flex-col w-full md:flex-row  md:max-w-5xl md:space-x-8">
+          <div className="md:flex-shrink-0 bg-gray-300 rounded-lg mx-auto  mb-4 md:mb-0 h-full">
             {nft ? (
-              <ThirdwebNftMedia metadata={nft.metadata} className="w-full h-full rounded-lg" style={{ objectFit: 'cover' }}/>
+              <ThirdwebNftMedia metadata={nft.metadata} className="w-full rounded-lg" style={{ objectFit: 'cover' }}/>
             ) : (
               <img src="/placeholder.svg" alt="NFT Image" className="w-full h-full rounded-lg" />
             )}
           </div>
-          <div className="flex flex-col w-full p-4 bg-white rounded-lg shadow dark:bg-gray-800">
+          <div className="flex flex-col md:w-full p-4 bg-white rounded-lg shadow dark:bg-gray-800 mx-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <span className="text-lg font-medium dark:text-gray-200">
@@ -182,7 +182,7 @@ export default function WalletPage({ params }: { params: { address: string } }) 
                 </Button>
               </div>
               <Link href={`https://sepolia.basescan.org/address/${params.address}`} target="_blank">
-                <Button variant="default" className="bg-purple-500 text-white">
+                <Button variant="default" className="bg-purple-500 text-white md:block hidden">
                   View on Explorer
                 </Button>
               </Link>
@@ -192,7 +192,7 @@ export default function WalletPage({ params }: { params: { address: string } }) 
               <Badge variant="default">Assets</Badge>
             </div>
             {nfts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 {nfts.map((nft, idx) => (
                   <NFTCard key={idx} nft={nft} />
                 ))}
@@ -218,9 +218,9 @@ export default function WalletPage({ params }: { params: { address: string } }) 
 
 function NFTCard({ nft }: { nft: NFT }) {
   return (
-    <div className="w-[250px] border rounded-lg shadow-sm overflow-hidden">
+    <div className="w-full h-full sm:w-[250px] border rounded-lg shadow-sm overflow-hidden">
       <div className="p-0">
-        <ThirdwebNftMedia metadata={{...nft.metadata, id: nft.id.toString()}} className="w-full h-[200px] object-cover" />
+        <ThirdwebNftMedia metadata={{...nft.metadata, id: nft.id.toString()}} className="w-full" style={{ objectFit: 'cover' }} />
       </div>
       <div className="flex flex-col items-start p-4 space-y-2 bg-white dark:bg-gray-800">
         <div className="text-lg font-semibold">{nft.metadata.name}</div>
