@@ -11,7 +11,8 @@ import { useActiveAccount } from "thirdweb/react";
 import { Badge } from "@/app/components/v0/badge";
 import { Button } from "@/app/components/v0/button";
 import Link from "next/link";
-
+import { WalletId, createWallet, injectedProvider } from "thirdweb/wallets";
+import { get_wallet_id } from "@/app/const/utils";
 
 function CopyIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
   return (
@@ -112,30 +113,37 @@ export default function WalletPage({ params }: { params: { address: string } }) 
 
   const claimToken = async () => {
     setIsLoading(true);
+    const client = createThirdwebClient({ clientId });
 
-    const tx = prepareContractCall({
-      contract,
-      method:
-        "function claim(address _receiver, uint256 _tokenId,  uint256 _quantity, address _currency, uint256 _pricePerToken, (bytes32[],uint256,uint256,address) _allowlistProof, bytes _data) public",
-      params: [
-        params.address,
-        0n,
-        1n,
-        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-        0n,
-        allow_list,
-        "0x",
-      ],
-    } as any);
+    let wallet_type: WalletId = (await get_wallet_id()) as WalletId;
+    const metamask = createWallet(wallet_type);
 
-    const transactionResult = await sendTransaction({
-      transaction: tx,
-      account: activeAccount!,
-    });
+    if (injectedProvider(wallet_type)) {
+      let _account = await metamask.connect({ client });
+      const tx = prepareContractCall({
+        contract,
+        method:
+          "function claim(address _receiver, uint256 _tokenId,  uint256 _quantity, address _currency, uint256 _pricePerToken, (bytes32[],uint256,uint256,address) _allowlistProof, bytes _data) public",
+        params: [
+          params.address,
+          0n,
+          1n,
+          "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          0n,
+          allow_list,
+          "0x",
+        ],
+      } as any);
 
-    console.log("transactionResult", transactionResult);
-    await fetchNFTs(params.address);
-    setIsLoading(false);
+      const transactionResult = await sendTransaction({
+        transaction: tx,
+        account: _account,
+      });
+
+      console.log("transactionResult", transactionResult);
+      await fetchNFTs(params.address);
+      setIsLoading(false);
+    }
   };
 
   const formatIpfsUrl = (url: string) => {
@@ -164,7 +172,7 @@ export default function WalletPage({ params }: { params: { address: string } }) 
             )}
           </div>
           <div className="flex flex-col w-full p-4 bg-white rounded-lg shadow dark:bg-gray-800">
-          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <span className="text-lg font-medium dark:text-gray-200">
                   {params.address.slice(0, 6)}...{params.address.slice(-4)}
