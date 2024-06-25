@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { BaseSepoliaTestnet } from "@thirdweb-dev/chains";
 import { clientId } from "./const/constants";
+import { Header } from "./components/Header";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,9 +16,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className="bg-background-light dark:bg-background-dark min-h-screen">
         <ThirdwebProvider activeChain={BaseSepoliaTestnet} clientId={clientId}>
+          <ThemeProvider attribute="class">
+          <Header />
+          <main className="flex-grow">
+          
           {children}
+          </main>
+          </ThemeProvider>
         </ThirdwebProvider>
       </body>
     </html>
