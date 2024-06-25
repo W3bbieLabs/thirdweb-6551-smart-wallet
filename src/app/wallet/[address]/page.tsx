@@ -8,14 +8,18 @@ import { clientId, allow_list } from "@/app/const/constants";
 import { Container } from "@/app/components/Container";
 import Image from "next/image";
 import { ThirdwebNftMedia } from "@thirdweb-dev/react";
+import { useActiveAccount } from "thirdweb/react";
 
 export default function WalletPage({ params }: { params: { address: string } }) {
   const searchParams = useSearchParams();
   const nftParam = searchParams.get("nft");
   const nft = nftParam ? JSON.parse(decodeURIComponent(nftParam)) : null;
+  console.log(nft)
 
   const [nfts, setNfts] = useState<(NFT & { quantityOwned: bigint })[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const activeAccount = useActiveAccount();
 
   const client = createThirdwebClient({
     clientId: "6f548b049f47f192d385041415b48f24",
@@ -63,9 +67,10 @@ export default function WalletPage({ params }: { params: { address: string } }) 
       ],
     } as any);
 
+    
     const transactionResult = await sendTransaction({
       transaction: tx,
-      account: params.address,
+      account: activeAccount!,
     });
 
     console.log("transactionResult", transactionResult);
@@ -101,11 +106,9 @@ export default function WalletPage({ params }: { params: { address: string } }) 
                 <p className="text-lg font-medium">ID: {nft.id.toString()}</p>
                 <p className="text-base">Name: {nft.metadata.name}</p>
                 <p className="text-sm text-gray-400">Description: {nft.metadata.description}</p>
-                <img
-                  src={formatIpfsUrl(nft.metadata.image)}
-                  alt={nft.metadata.name}
-                  className="w-full h-48 object-cover mt-2"
-                />
+                { nft.metadata && (
+                  <ThirdwebNftMedia metadata={{ ...nft.metadata, id: nft.id.toString() }} className="w-full h-48 object-cover rounded-lg"/>
+                )}
               </div>
             ))}
           </div>
