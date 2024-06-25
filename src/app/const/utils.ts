@@ -14,7 +14,7 @@ export const claim = (contract: ContractOptions, address: string, token_id: bigi
         method:
             "function claim(address _receiver, uint256 _tokenId,  uint256 _quantity, address _currency, uint256 _pricePerToken, (bytes32[],uint256,uint256,address) _allowlistProof, bytes _data) public",
         params: [address, token_id, quantity, currency, price_per_token, allow_list_proof, data]
-    });
+    } as any);
     return tx
 }
 
@@ -45,6 +45,6 @@ export const claim2 = (contract: ContractOptions, address: string, token_id: big
         method:
             "function claim(address _receiver, uint256 _tokenId,  uint256 _quantity, address _currency, uint256 _pricePerToken, (bytes32[],uint256,uint256,address) _allowlistProof, bytes _data) public",
         params: [address, token_id, quantity, currency, price_per_token, allow_list_proof, data]
-    });
+    } as any);
     return tx
 }
