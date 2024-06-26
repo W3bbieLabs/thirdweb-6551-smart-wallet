@@ -220,12 +220,12 @@ export default function WalletPage({ params }: { params: { address: string } }) 
 
 function NFTCard({ nft }: { nft: NFT }) {
   return (
-    <Card className="md:max-w-42 bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-lg">
+    <Card className="md:max-w-40 bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-lg">
       <CardContent className="p-0">
-      <ThirdwebNftMedia metadata={{...nft.metadata, id: nft.id.toString()}} className="max-h-32 max-w-32 mx-auto" style={{ objectFit: 'cover' }} />
+      <ThirdwebNftMedia metadata={{...nft.metadata, id: nft.id.toString()}} className="max-h-36 mx-auto rounded-t-md" style={{ objectFit: 'cover' }} />
       </CardContent>
       <div>
-        <CardContent className="flex flex-col items-start p-4 space-y-2">
+        <CardContent className="flex flex-col items-start p-2 space-y-2">
           <div className="flex justify-between w-full">
             <div className="text-sm font-semibold">{nft.metadata.name}</div>
             <Badge variant="outline">#{nft.id.toString()}</Badge>

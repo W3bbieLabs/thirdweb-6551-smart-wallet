@@ -29,8 +29,8 @@ export function Header() {
             </Link>
           </div>
           <div className="hidden md:flex md:gap-x-6 ">
-            <NavLink href="/">Community</NavLink>
-            <NavLink href="/">Learn</NavLink>
+            <NavLink href="https://x.com/PublicGoodsClub" target="_blank">Community</NavLink>
+            <NavLink href="https://mirror.xyz/bigtrav.eth/6hD4LTjGWC8TXef4DGIxbdVSibreKLTWila-wOku0DM" target="_blank">Learn</NavLink>
             <NavLink href="/"> My NFTs</NavLink>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
