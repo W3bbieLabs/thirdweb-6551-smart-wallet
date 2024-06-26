@@ -22,15 +22,15 @@ function MobileNavLink({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  console.log(href, pathname);
+  console.log("mobile nav path: ", href, pathname);
   return (
     <PopoverButton
       as={Link}
       href={href}
       className={clsx(
         "block w-full p-2",
-        (pathname === href || pathname.startsWith(href)) &&
-          "text-primary dark:text-primary-dark"
+        (pathname === href) &&
+          "text-background-dark dark:text-background-light"
       )}
     >
       {children}
@@ -100,8 +100,8 @@ export default function MobileNavigation() {
               as="div"
               className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white dark:bg-black p-4 text-lg tracking-tight text-foreground-light dark:text-foreground-dark shadow-xl ring-1 ring-slate-900/5"
             >
-              <MobileNavLink href="/">Community</MobileNavLink>
-              <MobileNavLink href="/">Learn</MobileNavLink>
+              <MobileNavLink href="https://x.com/PublicGoodsClub">Community</MobileNavLink>
+              <MobileNavLink href="https://mirror.xyz/bigtrav.eth/6hD4LTjGWC8TXef4DGIxbdVSibreKLTWila-wOku0DM">Learn</MobileNavLink>
               <MobileNavLink href="/">My NFTs</MobileNavLink>
               <ConnectWallet/>
             </PopoverPanel>
