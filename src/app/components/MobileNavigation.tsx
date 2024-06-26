@@ -16,9 +16,11 @@ import { darkTheme, lightTheme } from "thirdweb/react";
 
 function MobileNavLink({
   href,
+  target,
   children,
 }: {
   href: string;
+  target?: string;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -27,10 +29,11 @@ function MobileNavLink({
     <PopoverButton
       as={Link}
       href={href}
+      target={target}
       className={clsx(
         "block w-full p-2",
         (pathname === href) &&
-          "text-background-dark dark:text-background-light"
+          "text-background-light"
       )}
     >
       {children}
@@ -98,10 +101,10 @@ export default function MobileNavigation() {
           >
             <PopoverPanel
               as="div"
-              className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white dark:bg-black p-4 text-lg tracking-tight text-foreground-light dark:text-foreground-dark shadow-xl ring-1 ring-slate-900/5"
+              className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white dark:bg-black p-4 text-lg tracking-tight text-background-dark dark:text-foreground-dark shadow-xl ring-1 ring-slate-900/5"
             >
-              <MobileNavLink href="https://x.com/PublicGoodsClub">Community</MobileNavLink>
-              <MobileNavLink href="https://mirror.xyz/bigtrav.eth/6hD4LTjGWC8TXef4DGIxbdVSibreKLTWila-wOku0DM">Learn</MobileNavLink>
+              <MobileNavLink href="https://x.com/PublicGoodsClub" target="_blank">Community</MobileNavLink>
+              <MobileNavLink href="https://mirror.xyz/bigtrav.eth/6hD4LTjGWC8TXef4DGIxbdVSibreKLTWila-wOku0DM" target="_blank">Learn</MobileNavLink>
               <MobileNavLink href="/">My NFTs</MobileNavLink>
               <ConnectWallet/>
             </PopoverPanel>
