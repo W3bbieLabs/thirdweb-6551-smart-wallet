@@ -59,7 +59,7 @@ export default function Home() {
   };
 
   return (
-    <main className="p-4 pb-10 flex items-center justify-center container mx-auto min-h-screen">
+    <main className="bg-gray-100 dark:bg-gray-900 p-4 pb-10 flex justify-center mx-auto min-h-screen ">
       <div className="lg:px-20 lg:py-8 md:p-12 p-4">
         {chain?.chainId === BaseSepoliaTestnet.chainId ? (
           nfts && nfts.length > 0 ? (
