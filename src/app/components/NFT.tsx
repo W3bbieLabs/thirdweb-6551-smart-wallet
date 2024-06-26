@@ -8,7 +8,10 @@ import newSmartWallet from "./SmartWallet";
 import { clientId } from "../const/constants";
 import { createThirdwebClient } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
-import { useRouter } from "next/navigation"; // Adjusted to use Next.js 13 client-side navigation
+import { useRouter } from "next/navigation";
+import { Card, CardContent } from "./v0/NFT/card";
+import { Badge } from "./v0/badge";
+import { Button } from "./v0/button";
 
 type Props = {
   nft: NFT;
@@ -44,29 +47,27 @@ export default function NFTComponent({ nft }: Props) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 text-black dark:text-white p-6 rounded-lg shadow-lg">
-      <div className="mb-4">
-        <ThirdwebNftMedia metadata={nft.metadata} className="w-full h-48 object-cover rounded-lg"/>
-        <p className="text-lg font-bold mt-2">Token ID: {nft.metadata.id}</p>
-        <p className="text-md">{nft.metadata.name}</p>
-      </div>
-      {isLoading ? (
-        <p className="text-blue-500 text-center">Connecting...</p>
-      ) : smartWalletAddress ? (
-        <button
-          onClick={viewSmartWallet}
-          className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-700 w-full"
-        >
-          View Smart Wallet
-        </button>
-      ) : (
-        <button
-          onClick={createSmartWallet}
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 w-full"
-        >
-          Connect Smart Wallet
-        </button>
-      )}
-    </div>
+    <Card className="w-[250px] bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-lg">
+      <CardContent className="p-0">
+        <ThirdwebNftMedia metadata={nft.metadata} className="w-full max-h-60 rounded-t-md" style={{objectFit: "cover"}} />
+      </CardContent>
+      <CardContent className="flex flex-col items-start p-4 space-y-2">
+      <div className="flex justify-between w-full">
+        <div className="text-lg font-semibold">{nft.metadata.name}</div>
+        <Badge variant="outline">#{nft.metadata.id}</Badge>
+        </div>
+        {isLoading ? (
+          <p className="text-blue-500 text-center w-full">Connecting...</p>
+        ) : smartWalletAddress ? (
+          <Button onClick={viewSmartWallet} variant="default" className="w-full bg-green-500 text-white">
+            View Smart Wallet
+          </Button>
+        ) : (
+          <Button onClick={createSmartWallet} variant="default" className="w-full bg-blue-500 text-white">
+            Connect Smart Wallet
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 }

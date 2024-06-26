@@ -10,9 +10,11 @@ import { ThirdwebNftMedia } from "@thirdweb-dev/react";
 import { useActiveAccount } from "thirdweb/react";
 import { Badge } from "@/app/components/v0/badge";
 import { Button } from "@/app/components/v0/button";
+import { Card, CardContent } from "@/app/components/v0/NFT/card";
 import Link from "next/link";
 import { WalletId, createWallet, injectedProvider } from "thirdweb/wallets";
 import { get_wallet_id } from "@/app/const/utils";
+import Image from "next/image";
 
 function CopyIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
   return (
@@ -162,16 +164,16 @@ export default function WalletPage({ params }: { params: { address: string } }) 
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <main className="flex flex-col items-center p-8">
-        <div className="flex w-full max-w-5xl space-x-8">
-          <div className="flex-shrink-0 w-64 h-64 bg-gray-300 rounded-lg">
+      <Container className="flex flex-col items-center p-4 md:p-8">
+        <div className="flex flex-col w-full md:flex-row  md:max-w-5xl md:space-x-8">
+          <div className="md:flex-shrink-0 bg-gray-300 rounded-lg mx-auto  mb-4 md:mb-0 h-full">
             {nft ? (
-              <ThirdwebNftMedia metadata={nft.metadata} className="w-full h-full object-cover rounded-lg" />
+              <ThirdwebNftMedia metadata={nft.metadata} className="w-full rounded-lg" style={{ objectFit: 'cover' }}/>
             ) : (
-              <img src="/placeholder.svg" alt="NFT Image" className="w-full h-full rounded-lg" />
+              <Image src="/placeholder.svg" alt="NFT Image" className="w-full h-full rounded-lg" />
             )}
           </div>
-          <div className="flex flex-col w-full p-4 bg-white rounded-lg shadow dark:bg-gray-800">
+          <div className="flex flex-col md:w-full p-4 bg-white rounded-lg shadow dark:bg-gray-800 mx-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <span className="text-lg font-medium dark:text-gray-200">
@@ -182,17 +184,17 @@ export default function WalletPage({ params }: { params: { address: string } }) 
                 </Button>
               </div>
               <Link href={`https://sepolia.basescan.org/address/${params.address}`} target="_blank">
-                <Button variant="default" className="bg-purple-500 text-white">
+                <Button variant="default" className="bg-purple-500 text-white md:block hidden">
                   View on Explorer
                 </Button>
               </Link>
             </div>
-            <div className="flex items-center mt-4 space-x-2">
+            <div className="flex items-center mt-3 space-x-2">
               <Badge variant="default">Collectibles</Badge>
               <Badge variant="default">Assets</Badge>
             </div>
             {nfts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 {nfts.map((nft, idx) => (
                   <NFTCard key={idx} nft={nft} />
                 ))}
@@ -211,23 +213,25 @@ export default function WalletPage({ params }: { params: { address: string } }) 
             )}
           </div>
         </div>
-      </main>
+      </Container>
     </div>
   );
 }
 
 function NFTCard({ nft }: { nft: NFT }) {
   return (
-    <div className="w-[250px] border rounded-lg shadow-sm overflow-hidden">
-      <div className="p-0">
-        <ThirdwebNftMedia metadata={{...nft.metadata, id: nft.id.toString()}} className="w-full h-[200px] object-cover" />
+    <Card className="md:max-w-40 bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-lg">
+      <CardContent className="p-0">
+      <ThirdwebNftMedia metadata={{...nft.metadata, id: nft.id.toString()}} className="max-h-36 mx-auto rounded-t-md" style={{ objectFit: 'cover' }} />
+      </CardContent>
+      <div>
+        <CardContent className="flex flex-col items-start p-2 space-y-2">
+          <div className="flex justify-between w-full">
+            <div className="text-sm font-semibold">{nft.metadata.name}</div>
+            <Badge variant="outline">#{nft.id.toString()}</Badge>
+          </div>
+        </CardContent>
       </div>
-      <div className="flex flex-col items-start p-4 space-y-2 bg-white dark:bg-gray-800">
-        <div className="text-lg font-semibold">{nft.metadata.name}</div>
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <span>{nft.id.toString()}</span>
-        </div>
-      </div>
-    </div>
+    </Card>
   );
 }
