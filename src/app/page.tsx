@@ -40,15 +40,15 @@ export default function Home() {
       return (
         <Container className="min-h-screen flex items-start mt-24 justify-center">
           <div className="text-center">
-            You do not own a Membership Token. Click{" "}
-            <a
-              href="https://avatar-basedart.vercel.app/"
-              target="_blank"
+          You do not own a Membership Token. Click{" "}
+          <a
+            href="https://avatar-basedart.vercel.app/"
+            target="_blank"
               className="dark:text-blue-600 text-foreground-dark"
-            >
-              here
-            </a>{" "}
-            to claim a membership token.
+          >
+            here
+          </a>{" "}
+          to claim a membership token.
           </div>
         </Container>
       );
@@ -57,11 +57,11 @@ export default function Home() {
 
   return (
     <main className="p-4 pb-10 flex items-center justify-center container mx-auto min-h-screen">
-      <div className="lg:px-20 lg:py-8 md:p-12 p-4 flex-grow">
+      <div className="lg:px-20 lg:py-8 md:p-12 p-4">
         {nfts && nfts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {showNFTS(nfts || [])}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {showNFTS(nfts || [])}
+        </div>
         ) : (
           <div className="flex items-center justify-center w-full">
             {showNFTS(nfts || [])}
