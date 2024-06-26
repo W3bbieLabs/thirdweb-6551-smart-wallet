@@ -148,13 +148,6 @@ export default function WalletPage({ params }: { params: { address: string } }) 
     }
   };
 
-  const formatIpfsUrl = (url: string) => {
-    if (url.startsWith("ipfs://")) {
-      return `https://ipfs.io/ipfs/${url.slice(7)}`;
-    }
-    return url;
-  };
-
   const handleCopy = () => {
     navigator.clipboard.writeText(params.address).then(() => {
       setCopied(true);

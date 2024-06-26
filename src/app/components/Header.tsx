@@ -35,7 +35,7 @@ export function Header() {
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div className="hidden md:block">
-              <ConnectWallet />
+              <ConnectWallet  switchToActiveChain={true} />
             </div>
             <ThemeToggle />
             <div className="-mr-1 md:hidden">
