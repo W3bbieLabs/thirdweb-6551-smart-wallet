@@ -18,8 +18,8 @@ export function NavLink({
       href={href}
       target={target}
       className={clsx(
-        "inline-block rounded-lg py-1 px-2 text-sm text-foreground-light dark:text-foreground-dark hover:text-primary dark:hover:text-primary-dark",
-        pathname === href
+        "inline-block rounded-lg py-1 px-2 text-sm text-foreground-light dark:text-foreground-dark hover:text-primary dark:hover:text-background-light",
+        pathname === href && ("text-primary dark:text-background-light")
       )}
     >
       {children}
