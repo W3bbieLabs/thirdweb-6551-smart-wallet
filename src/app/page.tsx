@@ -7,9 +7,9 @@ import {
   NFT,
 } from "@thirdweb-dev/react";
 import { useRouter } from "next/navigation"; // Adjusted to use Next.js 13 client-side navigation
-import NFTComponent from "./components/NFT";
 import { nftDropAddress } from "./const/constants";
 import { Container } from "./components/Container";
+import NFTComponent from "./components/NFT";
 
 export default function Home() {
   const address = useAddress();
@@ -55,7 +55,7 @@ export default function Home() {
 
   return (
     <main className="p-4 pb-10 flex items-center justify-center container mx-auto">
-      <div className="p-20">
+      <div className="lg:px-20 lg:py-4 md:p-12 p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {showNFTS(nfts || [])}
         </div>

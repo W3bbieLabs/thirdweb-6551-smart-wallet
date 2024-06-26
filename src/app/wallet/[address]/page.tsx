@@ -10,9 +10,11 @@ import { ThirdwebNftMedia } from "@thirdweb-dev/react";
 import { useActiveAccount } from "thirdweb/react";
 import { Badge } from "@/app/components/v0/badge";
 import { Button } from "@/app/components/v0/button";
+import { Card, CardContent } from "@/app/components/v0/NFT/card";
 import Link from "next/link";
 import { WalletId, createWallet, injectedProvider } from "thirdweb/wallets";
 import { get_wallet_id } from "@/app/const/utils";
+import Image from "next/image";
 
 function CopyIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
   return (
@@ -162,13 +164,13 @@ export default function WalletPage({ params }: { params: { address: string } }) 
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <main className="flex flex-col items-center p-4 md:p-8">
+      <Container className="flex flex-col items-center p-4 md:p-8">
         <div className="flex flex-col w-full md:flex-row  md:max-w-5xl md:space-x-8">
           <div className="md:flex-shrink-0 bg-gray-300 rounded-lg mx-auto  mb-4 md:mb-0 h-full">
             {nft ? (
               <ThirdwebNftMedia metadata={nft.metadata} className="w-full rounded-lg" style={{ objectFit: 'cover' }}/>
             ) : (
-              <img src="/placeholder.svg" alt="NFT Image" className="w-full h-full rounded-lg" />
+              <Image src="/placeholder.svg" alt="NFT Image" className="w-full h-full rounded-lg" />
             )}
           </div>
           <div className="flex flex-col md:w-full p-4 bg-white rounded-lg shadow dark:bg-gray-800 mx-6">
@@ -187,7 +189,7 @@ export default function WalletPage({ params }: { params: { address: string } }) 
                 </Button>
               </Link>
             </div>
-            <div className="flex items-center mt-4 space-x-2">
+            <div className="flex items-center mt-3 space-x-2">
               <Badge variant="default">Collectibles</Badge>
               <Badge variant="default">Assets</Badge>
             </div>
@@ -211,23 +213,25 @@ export default function WalletPage({ params }: { params: { address: string } }) 
             )}
           </div>
         </div>
-      </main>
+      </Container>
     </div>
   );
 }
 
 function NFTCard({ nft }: { nft: NFT }) {
   return (
-    <div className="w-full h-full sm:w-[250px] border rounded-lg shadow-sm overflow-hidden">
-      <div className="p-0">
-        <ThirdwebNftMedia metadata={{...nft.metadata, id: nft.id.toString()}} className="w-full" style={{ objectFit: 'cover' }} />
+    <Card className="md:max-w-42 bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-lg">
+      <CardContent className="p-0">
+      <ThirdwebNftMedia metadata={{...nft.metadata, id: nft.id.toString()}} className="max-h-32 max-w-32 mx-auto" style={{ objectFit: 'cover' }} />
+      </CardContent>
+      <div>
+        <CardContent className="flex flex-col items-start p-4 space-y-2">
+          <div className="flex justify-between w-full">
+            <div className="text-sm font-semibold">{nft.metadata.name}</div>
+            <Badge variant="outline">#{nft.id.toString()}</Badge>
+          </div>
+        </CardContent>
       </div>
-      <div className="flex flex-col items-start p-4 space-y-2 bg-white dark:bg-gray-800">
-        <div className="text-lg font-semibold">{nft.metadata.name}</div>
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <span>{nft.id.toString()}</span>
-        </div>
-      </div>
-    </div>
+    </Card>
   );
 }

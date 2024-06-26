@@ -15,7 +15,7 @@ export function Header() {
   return (
     <header className="">
       <Container>
-        <nav className="relative z-50 flex justify-between items-center p-2">
+        <nav className="relative z-50 flex justify-between items-center p-4 md:pt-4">
           <div className="flex items-center md:gap-x-12 justify-center">
             <Link href="/">
               <div className="flex items-center">
