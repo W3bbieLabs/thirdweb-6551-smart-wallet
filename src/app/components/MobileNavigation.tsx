@@ -10,9 +10,13 @@ import clsx from "clsx";
 import Link from "next/link";
 import { Fragment } from "react";
 import { usePathname } from "next/navigation";
-import { ConnectWallet } from "@thirdweb-dev/react";
+//import { ConnectWallet } from "@thirdweb-dev/react";
 import { useTheme } from "next-themes";
 import { darkTheme, lightTheme } from "thirdweb/react";
+import { baseSepolia } from "thirdweb/chains";
+import { client, wallets } from "../const/utils";
+import { defineChain } from "thirdweb";
+import { ConnectButton } from "thirdweb/react";
 
 function MobileNavLink({
   href,
@@ -24,7 +28,7 @@ function MobileNavLink({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  console.log("mobile nav path: ", href, pathname);
+  //console.log("mobile nav path: ", href, pathname);
   return (
     <PopoverButton
       as={Link}
@@ -32,8 +36,7 @@ function MobileNavLink({
       target={target}
       className={clsx(
         "block w-full p-2",
-        (pathname === href) &&
-          "text-background-light"
+        pathname === href && "text-background-light"
       )}
     >
       {children}
@@ -103,10 +106,43 @@ export default function MobileNavigation() {
               as="div"
               className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white dark:bg-black p-4 text-lg tracking-tight text-background-dark dark:text-foreground-dark shadow-xl ring-1 ring-slate-900/5"
             >
-              <MobileNavLink href="https://x.com/PublicGoodsClub" target="_blank">Community</MobileNavLink>
-              <MobileNavLink href="https://mirror.xyz/bigtrav.eth/6hD4LTjGWC8TXef4DGIxbdVSibreKLTWila-wOku0DM" target="_blank">Learn</MobileNavLink>
+              <MobileNavLink
+                href="https://x.com/PublicGoodsClub"
+                target="_blank"
+              >
+                Community
+              </MobileNavLink>
+              <MobileNavLink
+                href="https://mirror.xyz/bigtrav.eth/6hD4LTjGWC8TXef4DGIxbdVSibreKLTWila-wOku0DM"
+                target="_blank"
+              >
+                Learn
+              </MobileNavLink>
               <MobileNavLink href="/">My NFTs</MobileNavLink>
-              <ConnectWallet/>
+              <ConnectButton
+                client={client}
+                wallets={wallets}
+                chain={defineChain(baseSepolia)}
+                theme={"dark"}
+                appMetadata={{
+                  name: "Avatar",
+                  url: "https://example.com",
+                }}
+                connectButton={{ label: "Log In or Sign Up" }}
+                connectModal={{
+                  size: "wide",
+                  title: "Choose Method",
+                  welcomeScreen: {
+                    title: "PublicGoodsClub",
+                    img: {
+                      src: "https://media.discordapp.net/attachments/1244435318006874163/1248808384753434634/PGC_Flower_Logo.png?ex=666502f0&is=6663b170&hm=88b38c7b5a86511dcb2d2e5c6d5c02ecde91dd8a880a65ada02924a5db318d87&=&format=webp&quality=lossless",
+                      width: 150,
+                      height: 150,
+                    },
+                  },
+                  showThirdwebBranding: false,
+                }}
+              />
             </PopoverPanel>
           </Transition>
         </>

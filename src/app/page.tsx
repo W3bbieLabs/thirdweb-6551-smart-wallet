@@ -45,7 +45,7 @@ export default function Home() {
   */
 
   let showNFTS = (nfts: NFT[]) => {
-    console.log("nfts", nfts);
+    //console.log("nfts", nfts);
 
     if (nfts?.length > 0) {
       return nfts.map((nft) => (

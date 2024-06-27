@@ -145,3 +145,9 @@ export const pgc_1155_id_contract = getContract({
 });
 
 export const active_chain_id: bigint = BigInt(process.env.NEXT_PUBLIC_CHAIN_ID!);
+
+
+export const wallets = [
+    createWallet("com.coinbase.wallet"),
+    createWallet("io.metamask"),
+];

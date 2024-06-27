@@ -12,14 +12,17 @@ import { ConnectButton } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";
 import { baseSepolia } from "thirdweb/chains";
 import { CreateThirdwebClientOptions } from "thirdweb";
+import { client, wallets } from "../const/utils";
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
 import { createThirdwebClient, defineChain } from "thirdweb";
 
+/*
 const wallets = [
   createWallet("com.coinbase.wallet"),
   createWallet("io.metamask"),
 ];
+*/
 
 export function Header() {
   const { theme } = useTheme();
@@ -28,10 +31,12 @@ export function Header() {
     throw new Error("CLIENT_ID is not defined in environment variables");
   }
 
+  /*
   const client = createThirdwebClient({
     clientId: CLIENT_ID,
     secretKey: undefined,
   });
+  */
 
   return (
     <header className="">
