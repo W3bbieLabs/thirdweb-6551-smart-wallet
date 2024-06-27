@@ -7,13 +7,14 @@ import {
   createThirdwebClient,
   prepareContractCall,
   sendTransaction,
+  ThirdwebClient,
   NFT,
 } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
 import { clientId, allow_list } from "@/app/const/constants";
 import { Container } from "@/app/components/Container";
-import { ThirdwebNftMedia } from "@thirdweb-dev/react";
-import { useActiveAccount } from "thirdweb/react";
+//import { ThirdwebNftMedia } from "@thirdweb-dev/react";
+import { useActiveAccount, MediaRenderer } from "thirdweb/react";
 import { Badge } from "@/app/components/v0/badge";
 import { Button } from "@/app/components/v0/button";
 import { Card, CardContent } from "@/app/components/v0/NFT/card";
@@ -21,6 +22,9 @@ import Link from "next/link";
 import { WalletId, createWallet, injectedProvider } from "thirdweb/wallets";
 import { get_wallet_id } from "@/app/const/utils";
 import Image from "next/image";
+import { SmartWalletOptions } from "thirdweb/wallets";
+import { smartWallet } from "thirdweb/wallets";
+import { useRouter } from "next/navigation"; // Adjusted to use Next.js 13 client-side navigation
 
 function CopyIcon(
   props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
@@ -91,6 +95,7 @@ export default function WalletPage({
 }: {
   params: { address: string };
 }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const nftParam = searchParams.get("nft");
   const nft = nftParam ? JSON.parse(decodeURIComponent(nftParam)) : null;
@@ -98,8 +103,9 @@ export default function WalletPage({
   const [nfts, setNfts] = useState<(NFT & { quantityOwned: bigint })[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [smart_wallet_address, setSmartWalletAddress] = useState<string>("");
 
-  const activeAccount = useActiveAccount();
+  const account = useActiveAccount();
 
   const client = createThirdwebClient({
     clientId: "6f548b049f47f192d385041415b48f24",
@@ -129,42 +135,53 @@ export default function WalletPage({
     setNfts(ownedNFTs);
   };
 
+  const newSmartWallet = () => {
+    const config: SmartWalletOptions = {
+      chain: baseSepolia,
+      sponsorGas: true,
+    };
+
+    return smartWallet(config);
+  };
+
   const claimToken = async () => {
     console.log("Claiming token");
-    /*
-    setIsLoading(true);
-    const client = createThirdwebClient({ clientId });
+    let smart_wallet = newSmartWallet();
+    const smart_wallet_acount = await smart_wallet.connect({
+      chain: baseSepolia,
+      client,
+      personalAccount: account!,
+    });
+    setSmartWalletAddress(smart_wallet_acount.address);
 
-    let wallet_type: WalletId = (await get_wallet_id()) as WalletId;
-    const metamask = createWallet(wallet_type);
+    const _1155_contract = getContract({
+      client,
+      chain: baseSepolia,
+      address: process.env.NEXT_PUBLIC_ID_NFT || "", // deploy a drop contract from thirdweb.com/explore
+    });
 
-    if (injectedProvider(wallet_type)) {
-      let _account = await metamask.connect({ client });
-      const tx = prepareContractCall({
-        contract,
-        method:
-          "function claim(address _receiver, uint256 _tokenId,  uint256 _quantity, address _currency, uint256 _pricePerToken, (bytes32[],uint256,uint256,address) _allowlistProof, bytes _data) public",
-        params: [
-          params.address,
-          0n,
-          1n,
-          "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-          0n,
-          allow_list,
-          "0x",
-        ],
-      } as any);
+    const tx = prepareContractCall({
+      contract: _1155_contract,
+      method:
+        "function claim(address _receiver, uint256 _tokenId,  uint256 _quantity, address _currency, uint256 _pricePerToken, (bytes32[],uint256,uint256,address) _allowlistProof, bytes _data) public",
+      params: [
+        smart_wallet_acount?.address,
+        0n,
+        1n,
+        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        0n,
+        allow_list,
+        "0x",
+      ],
+    } as any);
 
-      const transactionResult = await sendTransaction({
-        transaction: tx,
-        account: _account,
-      });
+    const transactionResult = await sendTransaction({
+      transaction: tx,
+      account: account!,
+    });
 
-      console.log("transactionResult", transactionResult);
-      await fetchNFTs(params.address);
-      setIsLoading(false);
-    }
-    */
+    console.log(transactionResult);
+    router.push(`/`);
   };
 
   const handleCopy = () => {
@@ -180,10 +197,11 @@ export default function WalletPage({
         <div className="flex flex-col w-full md:flex-row  md:max-w-5xl md:space-x-8">
           <div className="md:flex-shrink-0 bg-gray-300 rounded-lg mx-auto  mb-4 md:mb-0 h-full">
             {nft ? (
-              <ThirdwebNftMedia
-                metadata={nft.metadata}
+              <MediaRenderer
                 className="w-full rounded-lg"
                 style={{ objectFit: "cover" }}
+                client={client}
+                src={nft.metadata.image}
               />
             ) : (
               <Image
@@ -231,7 +249,7 @@ export default function WalletPage({
             {nfts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 {nfts.map((nft, idx) => (
-                  <NFTCard key={idx} nft={nft} />
+                  <NFTCard key={idx} nft={nft} client={client} />
                 ))}
               </div>
             ) : (
@@ -255,14 +273,15 @@ export default function WalletPage({
   );
 }
 
-function NFTCard({ nft }: { nft: NFT }) {
+function NFTCard({ nft, client }: { nft: NFT; client: ThirdwebClient }) {
   return (
     <Card className="md:max-w-40 bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-lg">
       <CardContent className="p-0">
-        <ThirdwebNftMedia
-          metadata={{ ...nft.metadata, id: nft.id.toString() }}
+        <MediaRenderer
           className="max-h-36 mx-auto rounded-t-md"
           style={{ objectFit: "cover" }}
+          client={client}
+          src={nft.metadata.image}
         />
       </CardContent>
       <div>

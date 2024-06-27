@@ -92,9 +92,11 @@ export default function Home() {
 
   let showNFTS = (nfts: NFT[]) => {
     console.log("nfts", nfts);
-    //<NFTComponent key={nft.metadata.id} nft={nft} />
+
     if (nfts?.length > 0) {
-      return nfts.map((nft) => <div>show NFT here.</div>);
+      return nfts.map((nft) => (
+        <NFTComponent key={nft.metadata.id} nft={nft} />
+      ));
     } else {
       return (
         <Container className="min-h-screen flex items-start mt-24 justify-center">
