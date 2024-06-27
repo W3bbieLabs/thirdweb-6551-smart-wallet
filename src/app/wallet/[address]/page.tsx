@@ -2,7 +2,13 @@
 import { useSearchParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { getOwnedNFTs } from "thirdweb/extensions/erc1155";
-import { getContract, createThirdwebClient, prepareContractCall, sendTransaction, NFT } from "thirdweb";
+import {
+  getContract,
+  createThirdwebClient,
+  prepareContractCall,
+  sendTransaction,
+  NFT,
+} from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
 import { clientId, allow_list } from "@/app/const/constants";
 import { Container } from "@/app/components/Container";
@@ -16,7 +22,9 @@ import { WalletId, createWallet, injectedProvider } from "thirdweb/wallets";
 import { get_wallet_id } from "@/app/const/utils";
 import Image from "next/image";
 
-function CopyIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+function CopyIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) {
   return (
     <svg
       {...props}
@@ -36,7 +44,9 @@ function CopyIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGEl
   );
 }
 
-function CheckIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+function CheckIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) {
   return (
     <svg
       {...props}
@@ -55,7 +65,9 @@ function CheckIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGE
   );
 }
 
-function TickIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+function TickIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) {
   return (
     <svg
       {...props}
@@ -74,7 +86,11 @@ function TickIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGEl
   );
 }
 
-export default function WalletPage({ params }: { params: { address: string } }) {
+export default function WalletPage({
+  params,
+}: {
+  params: { address: string };
+}) {
   const searchParams = useSearchParams();
   const nftParam = searchParams.get("nft");
   const nft = nftParam ? JSON.parse(decodeURIComponent(nftParam)) : null;
@@ -114,6 +130,8 @@ export default function WalletPage({ params }: { params: { address: string } }) 
   };
 
   const claimToken = async () => {
+    console.log("Claiming token");
+    /*
     setIsLoading(true);
     const client = createThirdwebClient({ clientId });
 
@@ -146,6 +164,7 @@ export default function WalletPage({ params }: { params: { address: string } }) 
       await fetchNFTs(params.address);
       setIsLoading(false);
     }
+    */
   };
 
   const handleCopy = () => {
@@ -161,9 +180,17 @@ export default function WalletPage({ params }: { params: { address: string } }) 
         <div className="flex flex-col w-full md:flex-row  md:max-w-5xl md:space-x-8">
           <div className="md:flex-shrink-0 bg-gray-300 rounded-lg mx-auto  mb-4 md:mb-0 h-full">
             {nft ? (
-              <ThirdwebNftMedia metadata={nft.metadata} className="w-full rounded-lg" style={{ objectFit: 'cover' }}/>
+              <ThirdwebNftMedia
+                metadata={nft.metadata}
+                className="w-full rounded-lg"
+                style={{ objectFit: "cover" }}
+              />
             ) : (
-              <Image src="/placeholder.svg" alt="NFT Image" className="w-full h-full rounded-lg" />
+              <Image
+                src="/placeholder.svg"
+                alt="NFT Image"
+                className="w-full h-full rounded-lg"
+              />
             )}
           </div>
           <div className="flex flex-col md:w-full p-4 bg-white rounded-lg shadow dark:bg-gray-800 mx-6">
@@ -172,12 +199,27 @@ export default function WalletPage({ params }: { params: { address: string } }) 
                 <span className="text-lg font-medium dark:text-gray-200">
                   {params.address.slice(0, 6)}...{params.address.slice(-4)}
                 </span>
-                <Button variant="outline" size="sm" className="mx-4" onClick={handleCopy}>
-                  {copied ? <TickIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mx-4"
+                  onClick={handleCopy}
+                >
+                  {copied ? (
+                    <TickIcon className="h-4 w-4" />
+                  ) : (
+                    <CopyIcon className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
-              <Link href={`https://sepolia.basescan.org/address/${params.address}`} target="_blank">
-                <Button variant="default" className="bg-purple-500 text-white md:block hidden">
+              <Link
+                href={`https://sepolia.basescan.org/address/${params.address}`}
+                target="_blank"
+              >
+                <Button
+                  variant="default"
+                  className="bg-purple-500 text-white md:block hidden"
+                >
                   View on Explorer
                 </Button>
               </Link>
@@ -194,7 +236,9 @@ export default function WalletPage({ params }: { params: { address: string } }) 
               </div>
             ) : (
               <div className="mt-4 text-center">
-                <p className="text-muted-foreground dark:text-gray-400">No NFTs in this account.</p>
+                <p className="text-muted-foreground dark:text-gray-400">
+                  No NFTs in this account.
+                </p>
                 <Button
                   onClick={claimToken}
                   className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700 mt-2"
@@ -215,7 +259,11 @@ function NFTCard({ nft }: { nft: NFT }) {
   return (
     <Card className="md:max-w-40 bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-lg">
       <CardContent className="p-0">
-      <ThirdwebNftMedia metadata={{...nft.metadata, id: nft.id.toString()}} className="max-h-36 mx-auto rounded-t-md" style={{ objectFit: 'cover' }} />
+        <ThirdwebNftMedia
+          metadata={{ ...nft.metadata, id: nft.id.toString() }}
+          className="max-h-36 mx-auto rounded-t-md"
+          style={{ objectFit: "cover" }}
+        />
       </CardContent>
       <div>
         <CardContent className="flex flex-col items-start p-2 space-y-2">
