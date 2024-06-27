@@ -1,22 +1,17 @@
-/*
-import {
-  ThirdwebNftMedia,
-  useWallet,
-} from "@thirdweb-dev/react";
-import { NFT } from "@thirdweb-dev/sdk";
-*/
 import { createThirdwebClient, NFT } from "thirdweb";
 import React, { useState } from "react";
-import newSmartWallet from "./SmartWallet";
-import { clientId } from "../const/constants";
 import { baseSepolia } from "thirdweb/chains";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "./v0/NFT/card";
 import { Badge } from "./v0/badge";
 import { Button } from "./v0/button";
-import { SmartWalletOptions } from "thirdweb/wallets";
-import { smartWallet } from "thirdweb/wallets";
-import { useActiveAccount, ConnectButton, MediaRenderer } from "thirdweb/react";
+import { useActiveAccount, MediaRenderer } from "thirdweb/react";
+import {
+  registry_contract,
+  get_tba_address,
+  newSmartWallet,
+  client,
+} from "../const/utils";
 
 type Props = {
   nft: NFT;
@@ -28,36 +23,29 @@ export default function NFTComponent({ nft }: Props) {
   const [smartWalletAddress, setSmartWalletAddress] = useState<string | null>(
     null
   );
-  //const wallet = useWallet();
+
   const router = useRouter();
-
-  const client = createThirdwebClient({
-    clientId: "6f548b049f47f192d385041415b48f24",
-  });
-
-  const newSmartWallet = (token: NFT) => {
-    const config: SmartWalletOptions = {
-      chain: baseSepolia,
-      sponsorGas: true,
-    };
-
-    return smartWallet(config);
-  };
 
   const createSmartWallet = async () => {
     if (!account) {
       return;
     }
     setIsLoading(true);
-    let smart_wallet = newSmartWallet(nft);
+    console.log("creating smart wallet");
+    let token_bound_address = await get_tba_address(
+      nft,
+      registry_contract,
+      BigInt(process.env.NEXT_PUBLIC_CHAIN_ID!)
+    );
+
+    let smart_wallet = newSmartWallet(token_bound_address);
     const smart_wallet_acount = await smart_wallet.connect({
       chain: baseSepolia,
       client,
       personalAccount: account!,
     });
-    console.log("smart_wallet_acount", smart_wallet_acount);
+    console.log("smart_wallet", smart_wallet_acount);
     setSmartWalletAddress(smart_wallet_acount.address);
-
     setIsLoading(false);
   };
 
@@ -69,7 +57,6 @@ export default function NFTComponent({ nft }: Props) {
           return out;
         })
       );
-      console.log(encodedNft);
       router.push(`/wallet/${smartWalletAddress}?nft=${encodedNft}`);
     }
   };
@@ -77,12 +64,6 @@ export default function NFTComponent({ nft }: Props) {
   return (
     <Card className="w-[250px] bg-white dark:bg-gray-800 text-black dark:text-white rounded-lg shadow-lg">
       <CardContent className="p-0">
-        {/*
-        <ThirdwebNftMedia
-          metadata={nft.metadata}
-          className="w-full max-h-60 rounded-t-md"
-          style={{ objectFit: "cover" }}
-        />*/}
         <MediaRenderer
           style={{ objectFit: "cover" }}
           className="w-full max-h-60 rounded-t-md"

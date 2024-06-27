@@ -1,56 +1,19 @@
 "use client";
 
-/*
-import {
-  useContract,
-  useOwnedNFTs,
-  useAddress,
-  ConnectWallet,
-  NFT,
-} from "@thirdweb-dev/react";
- */
-import {
-  getContract,
-  createThirdwebClient,
-  defineChain,
-  NFT,
-  prepareContractCall,
-  sendTransaction,
-} from "thirdweb";
+import { NFT } from "thirdweb";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation"; // Adjusted to use Next.js 13 client-side navigation
-import { nftDropAddress } from "./const/constants";
 import { Container } from "./components/Container";
 import NFTComponent from "./components/NFT";
-//import { useChain } from "@thirdweb-dev/react";
-import { BaseSepoliaTestnet } from "@thirdweb-dev/chains";
-const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
-import { CreateThirdwebClientOptions } from "thirdweb";
-import { baseSepolia } from "thirdweb/chains";
-const NFT_COLLECTION_ADDRESS = process.env.NEXT_PUBLIC_NFT_DROP_ADDRESS;
 import { getOwnedNFTs } from "thirdweb/extensions/erc721";
-import { useActiveAccount, ConnectButton, MediaRenderer } from "thirdweb/react";
+import { useActiveAccount } from "thirdweb/react";
+import { bounded_token_contract } from "@/app/const/utils";
 
 export default function Home() {
   //const address = useAddress();
-  const router = useRouter();
   const account = useActiveAccount();
   const [wallet_address, setWalletAddress] = useState<string>("");
-  const [smart_wallet_address, setSmartWalletAddress] = useState<string>("");
-
   const [ownedNFTs, setOwnedNFTs] = useState<NFT[] | null>([]);
-
-  //const chain = useChain();
-
-  //log("address", address);
-
-  /*
-  const { contract } = useContract(nftDropAddress);
-  const { data: nfts, isLoading: useOwnedIsLoading } = useOwnedNFTs(
-    contract,
-    address
-  );
-  */
 
   useEffect(() => {
     const fetch_nfts = async () => {
@@ -59,7 +22,7 @@ export default function Home() {
       }
 
       const nfts = await getOwnedNFTs({
-        contract,
+        contract: bounded_token_contract,
         owner: account?.address,
       });
 
@@ -74,21 +37,12 @@ export default function Home() {
     }
   }, [account, ownedNFTs]);
 
-  const client = createThirdwebClient({
-    clientId: CLIENT_ID!,
-    secretKey: undefined,
-  });
-
-  const contract = getContract({
-    client,
-    chain: baseSepolia,
-    address: NFT_COLLECTION_ADDRESS!,
-  });
-
+  /*
   const handleConnectSmartWallet = (smartWalletAddress: string, nft: NFT) => {
     const encodedNft = encodeURIComponent(JSON.stringify(nft));
     router.push(`/wallet/${smartWalletAddress}?nft=${encodedNft}`);
   };
+  */
 
   let showNFTS = (nfts: NFT[]) => {
     console.log("nfts", nfts);

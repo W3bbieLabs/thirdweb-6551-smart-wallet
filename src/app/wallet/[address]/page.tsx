@@ -1,30 +1,29 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import { getOwnedNFTs } from "thirdweb/extensions/erc1155";
-import {
-  getContract,
-  createThirdwebClient,
-  prepareContractCall,
-  sendTransaction,
-  ThirdwebClient,
-  NFT,
-} from "thirdweb";
+import { ThirdwebClient, NFT } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
-import { clientId, allow_list } from "@/app/const/constants";
+import { allow_list } from "@/app/const/constants";
 import { Container } from "@/app/components/Container";
-//import { ThirdwebNftMedia } from "@thirdweb-dev/react";
 import { useActiveAccount, MediaRenderer } from "thirdweb/react";
 import { Badge } from "@/app/components/v0/badge";
 import { Button } from "@/app/components/v0/button";
 import { Card, CardContent } from "@/app/components/v0/NFT/card";
 import Link from "next/link";
-import { WalletId, createWallet, injectedProvider } from "thirdweb/wallets";
-import { get_wallet_id } from "@/app/const/utils";
+import {
+  fetchNFTs,
+  get_tba_address,
+  newSmartWallet,
+  claim,
+} from "@/app/const/utils";
 import Image from "next/image";
-import { SmartWalletOptions } from "thirdweb/wallets";
-import { smartWallet } from "thirdweb/wallets";
 import { useRouter } from "next/navigation"; // Adjusted to use Next.js 13 client-side navigation
+import {
+  client,
+  registry_contract,
+  pgc_1155_id_contract,
+  active_chain_id,
+} from "@/app/const/utils";
 
 function CopyIcon(
   props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
@@ -103,85 +102,44 @@ export default function WalletPage({
   const [nfts, setNfts] = useState<(NFT & { quantityOwned: bigint })[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [smart_wallet_address, setSmartWalletAddress] = useState<string>("");
-
+  const [token_bound_address, setTokenBoundAddress] = useState<string>("");
   const account = useActiveAccount();
 
-  const client = createThirdwebClient({
-    clientId: "6f548b049f47f192d385041415b48f24",
-  });
-
-  const contractAddress = "0x5dabeEBc71B75fb9681D67CC4aeB654c6c858126";
-  const contract = getContract({
-    client,
-    chain: baseSepolia,
-    address: contractAddress,
-  });
-
   useEffect(() => {
-    if (params.address) {
-      fetchNFTs(params.address);
-    }
+    (async () => {
+      if (params.address) {
+        let _nfts = await fetchNFTs(params.address, pgc_1155_id_contract);
+        setNfts(_nfts);
+      }
+    })();
   }, [params.address]);
 
-  const fetchNFTs = async (walletAddress: string) => {
-    const ownedNFTs = await getOwnedNFTs({
-      contract,
-      start: 0,
-      count: 10,
-      address: walletAddress,
-    });
-    console.log("Owned NFTs:", ownedNFTs);
-    setNfts(ownedNFTs);
-  };
-
-  const newSmartWallet = () => {
-    const config: SmartWalletOptions = {
-      chain: baseSepolia,
-      sponsorGas: true,
-    };
-
-    return smartWallet(config);
-  };
-
   const claimToken = async () => {
-    console.log("Claiming token");
-    let smart_wallet = newSmartWallet();
+    let token_bound_address = await get_tba_address(
+      nft,
+      registry_contract,
+      active_chain_id
+    );
+    setTokenBoundAddress(token_bound_address);
+    let smart_wallet = newSmartWallet(token_bound_address);
     const smart_wallet_acount = await smart_wallet.connect({
       chain: baseSepolia,
       client,
       personalAccount: account!,
     });
-    setSmartWalletAddress(smart_wallet_acount.address);
-
-    const _1155_contract = getContract({
-      client,
-      chain: baseSepolia,
-      address: process.env.NEXT_PUBLIC_ID_NFT || "", // deploy a drop contract from thirdweb.com/explore
-    });
-
-    const tx = prepareContractCall({
-      contract: _1155_contract,
-      method:
-        "function claim(address _receiver, uint256 _tokenId,  uint256 _quantity, address _currency, uint256 _pricePerToken, (bytes32[],uint256,uint256,address) _allowlistProof, bytes _data) public",
-      params: [
-        smart_wallet_acount?.address,
-        0n,
-        1n,
-        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-        0n,
-        allow_list,
-        "0x",
-      ],
-    } as any);
-
-    const transactionResult = await sendTransaction({
-      transaction: tx,
-      account: account!,
-    });
-
-    console.log(transactionResult);
-    router.push(`/`);
+    let currency = process.env.NEXT_PUBLIC_CURRENCY || "";
+    let transactionResult = await claim(
+      pgc_1155_id_contract,
+      account!,
+      smart_wallet_acount?.address,
+      0n,
+      1n,
+      currency,
+      allow_list,
+      "0x"
+    );
+    // Temp fix to reload data
+    setTimeout(() => window.location.reload(), 1000);
   };
 
   const handleCopy = () => {
@@ -255,7 +213,7 @@ export default function WalletPage({
             ) : (
               <div className="mt-4 text-center">
                 <p className="text-muted-foreground dark:text-gray-400">
-                  No NFTs in this account.
+                  No Tokens in this account.
                 </p>
                 <Button
                   onClick={claimToken}
