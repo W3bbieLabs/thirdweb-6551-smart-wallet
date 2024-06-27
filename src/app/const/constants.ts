@@ -20,7 +20,9 @@ export const wallets = [
     createWallet("me.rainbow"),
 ];
 
-export const allow_list = [
+export type ALLOW_LIST_TYPE = [string[], string, string, string];
+
+export const allow_list: ALLOW_LIST_TYPE = [
     ["0x0000000000000000000000000000000000000000000000000000000000000000"],
     "115792089237316195423570985008687907853269984665640564039457584007913129639935",
     "0",
