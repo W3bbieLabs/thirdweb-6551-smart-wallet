@@ -15,12 +15,15 @@ import {
   get_tba_address,
   newSmartWallet,
   claim,
+  create_tba_account,
+  tba_test,
 } from "@/app/const/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation"; // Adjusted to use Next.js 13 client-side navigation
 import {
   client,
   registry_contract,
+  implementation_contract,
   pgc_1155_id_contract,
   active_chain_id,
 } from "@/app/const/utils";
@@ -115,11 +118,50 @@ export default function WalletPage({
   }, [params.address]);
 
   const claimToken = async () => {
+    console.log("claiming token");
+    //tba_test(implementation_contract);
+    //get_tba_owner(implementation_contract);
+    //init_tba(account!, implementation_contract);
+
+    // Code to create TBA Account manually
+    /* 
+    console.log("creating smart wallet");
+
     let token_bound_address = await get_tba_address(
       nft,
       registry_contract,
       active_chain_id
     );
+
+    let smart_wallet = newSmartWallet(token_bound_address);
+    console.log(token_bound_address);
+
+    const smart_wallet_acount = await smart_wallet.connect({
+      chain: base,
+      client,
+      personalAccount: account!,
+    });
+
+    console.log("smart_wallet_acount", smart_wallet_acount);
+
+    let tx = await create_tba_account(
+      smart_wallet_acount!,
+      nft,
+      registry_contract,
+      active_chain_id
+    );
+
+    console.log("tx", tx);
+    */
+
+    let token_bound_address = await get_tba_address(
+      nft,
+      registry_contract,
+      active_chain_id
+    );
+
+    //console.log("token_bound_address", token_bound_address);
+
     setTokenBoundAddress(token_bound_address);
     let smart_wallet = newSmartWallet(token_bound_address);
     const smart_wallet_acount = await smart_wallet.connect({
