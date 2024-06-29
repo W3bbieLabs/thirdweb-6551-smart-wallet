@@ -57,7 +57,7 @@ export default function Home() {
           <div className="text-center">
             You do not own a Membership Token. Click{" "}
             <a
-              href="https://avatar-basedart.vercel.app/"
+              href="https://www.pgc-members.xyz/"
               target="_blank"
               className="dark:text-blue-600 text-foreground-dark"
             >
