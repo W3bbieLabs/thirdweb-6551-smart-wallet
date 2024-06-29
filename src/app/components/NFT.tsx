@@ -52,11 +52,11 @@ export default function NFTComponent({ nft }: Props) {
     );
 
     let tba_contract = await get_generic_contract(token_bound_address);
-    console.log("tba_contract", tba_contract);
+    //console.log("tba_contract", tba_contract);
 
     try {
       let tba_owner = await get_tba_owner(tba_contract);
-      console.log("tba", token_bound_address, "tba_owner", tba_owner);
+      //console.log("tba", token_bound_address, "tba_owner", tba_owner);
       setSmartWalletAddress(token_bound_address);
       setIsLoading(false);
     } catch (e) {
@@ -70,7 +70,7 @@ export default function NFTComponent({ nft }: Props) {
         registry_contract,
         active_chain_id
       );
-      console.log("tx", tx);
+      //console.log("tx", tx);
 
       setTimeout(async () => {
         let tba_owner = await get_tba_owner(tba_contract);
