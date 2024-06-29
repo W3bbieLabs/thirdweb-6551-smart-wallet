@@ -1,22 +1,24 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import { ThirdwebClient, NFT } from "thirdweb";
+import { ThirdwebClient, NFT, getContract } from "thirdweb";
 import { base } from "thirdweb/chains";
-import { allow_list } from "@/app/const/constants";
+import { allow_list, implementation } from "@/app/const/constants";
 import { Container } from "@/app/components/Container";
 import { useActiveAccount, MediaRenderer } from "thirdweb/react";
 import { Badge } from "@/app/components/v0/badge";
 import { Button } from "@/app/components/v0/button";
 import { Card, CardContent } from "@/app/components/v0/NFT/card";
 import Link from "next/link";
+import { claimTo } from "thirdweb/extensions/erc1155";
+
 import {
   fetchNFTs,
   get_tba_address,
   newSmartWallet,
   claim,
   create_tba_account,
-  tba_test,
+  get_generic_contract,
 } from "@/app/const/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation"; // Adjusted to use Next.js 13 client-side navigation
@@ -26,6 +28,7 @@ import {
   implementation_contract,
   pgc_1155_id_contract,
   active_chain_id,
+  get_tba_owner,
 } from "@/app/const/utils";
 
 function CopyIcon(
@@ -119,22 +122,72 @@ export default function WalletPage({
 
   const claimToken = async () => {
     console.log("claiming token");
+    let currency = process.env.NEXT_PUBLIC_CURRENCY || "";
+    let transactionResult = await claim(
+      pgc_1155_id_contract,
+      account!,
+      params.address,
+      0n,
+      1n,
+      currency,
+      allow_list,
+      "0x"
+    );
+    // Temp fix to reload data
+    setTimeout(() => window.location.reload(), 1000);
+
     //tba_test(implementation_contract);
     //get_tba_owner(implementation_contract);
     //init_tba(account!, implementation_contract);
 
     // Code to create TBA Account manually
-    /* 
-    console.log("creating smart wallet");
-
+    /*
     let token_bound_address = await get_tba_address(
       nft,
       registry_contract,
       active_chain_id
-    );
+    );*/
 
-    let smart_wallet = newSmartWallet(token_bound_address);
-    console.log(token_bound_address);
+    /*
+    let smart_wallet = newSmartWallet();
+
+    const smart_wallet_acount = await smart_wallet.connect({
+      chain: base,
+      client,
+      personalAccount: account!,
+    });
+
+    claimTo({
+      contract: pgc_1155_id_contract,
+      to: params.address,
+      tokenId: 0n,
+      quantity: 1n,
+    });*/
+
+    //Check if token already has an TBA owner
+    /*
+    try {
+      let tba_contract = await get_generic_contract(token_bound_address);
+      console.log("tba_contract", tba_contract);
+      let tba_owner = await get_tba_owner(tba_contract);
+      console.log("tba", token_bound_address, "tba_owner", tba_owner);
+    } catch (e) {
+      //console.log("error", e);
+      console.log("creating TBA account.");
+
+      // No ownder found, create TBA account
+      let tx = await create_tba_account(
+        account!,
+        nft,
+        registry_contract,
+        active_chain_id
+      );
+      console.log("tx", tx);
+    }
+      */
+
+    /*
+    console.log("creating smart wallet");
 
     const smart_wallet_acount = await smart_wallet.connect({
       chain: base,
@@ -145,7 +198,7 @@ export default function WalletPage({
     console.log("smart_wallet_acount", smart_wallet_acount);
 
     let tx = await create_tba_account(
-      smart_wallet_acount!,
+      account!,
       nft,
       registry_contract,
       active_chain_id
@@ -154,13 +207,12 @@ export default function WalletPage({
     console.log("tx", tx);
     */
 
+    /*
     let token_bound_address = await get_tba_address(
       nft,
       registry_contract,
       active_chain_id
     );
-
-    //console.log("token_bound_address", token_bound_address);
 
     setTokenBoundAddress(token_bound_address);
     let smart_wallet = newSmartWallet(token_bound_address);
@@ -182,6 +234,7 @@ export default function WalletPage({
     );
     // Temp fix to reload data
     setTimeout(() => window.location.reload(), 1000);
+    */
   };
 
   const handleCopy = () => {

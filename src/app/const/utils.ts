@@ -21,7 +21,9 @@ import {
 import { smartWallet } from "thirdweb/wallets";
 import { clientId, allow_list, ALLOW_LIST_TYPE } from "./constants";
 import { Account } from "thirdweb/wallets";
+import { ThirdwebContract } from "thirdweb";
 const NFT_COLLECTION_ADDRESS = process.env.NEXT_PUBLIC_NFT_DROP_ADDRESS;
+
 
 
 export const truncate = (address: string, chars: number) => {
@@ -71,29 +73,36 @@ export const fetchNFTs = async (walletAddress: string, contract: Readonly<Contra
     return ownedNFTs
 };
 
-export const newSmartWallet = (token_bound_address: string) => {
+export const newSmartWallet = () => {
+    //console.log("token_bound_address", token_bound_address)
     const config: SmartWalletOptions = {
         chain: base,
-        sponsorGas: true,
+        sponsorGas: false,
         factoryAddress: factoryAddress,
         overrides: {
             entrypointAddress: entryPoint,
-            accountAddress: token_bound_address,
+            predictAddress: async (
+                factoryContract: ThirdwebContract,
+            ) => {
+                console.log("factory contract", factoryContract)
+                return await factoryContract.address;
+            }
         },
-        gasless: true,
+        gasless: false,
     };
 
     return smartWallet(config);
 };
 
 
-export const tba_test = async (implementation_contract: Readonly<ContractOptions<[]>>) => {
+export const get_tba_owner = async (deployed_tba_contract: Readonly<ContractOptions<[]>>) => {
     const data = await readContract({
-        contract: implementation_contract,
-        method: "function factory() view returns (address)",
+        contract: deployed_tba_contract,
+        method: "function owner() view returns (address)",
         params: []
     })
-    console.log(data)
+    return data
+    //console.log(data)
 }
 
 
@@ -121,9 +130,9 @@ export const create_tba_account = async (account: Account, nft: any, registry_co
         contract: registry_contract,
         method:
             "function createAccount( address implementation, uint256 chainId, address tokenContract, uint256 tokenId, uint256 salt, bytes initData) view returns (address)",
-        params: [implementation, chain_id, nftDropAddress, BigInt(id), 0n, "0x8129fc1c"],
+        params: [implementation, chain_id, nftDropAddress, BigInt(id), 0n, "0x"],
     });
-    console.log(implementation, chain_id, nftDropAddress, BigInt(id), 0n, "0x8129fc1c")
+    console.log(implementation, chain_id, nftDropAddress, BigInt(id), 0n, "0x")
 
     //0x452D6699dA2D89627Baa12d2cE9A32A2479398A0 8453n 0xF1316D7eC6465BF25d1f918037043D0420270900 3n 0n 0x8129fc1c
     console.log("tx", tx)
@@ -173,6 +182,16 @@ export const claim = async (
     return transactionResult;
 };
 
+export const get_generic_contract = async (address: string) => {
+    const _contract = getContract({
+        client,
+        chain: base,
+        address: address,
+    });
+
+    return _contract
+}
+
 export const client = createThirdwebClient({
     clientId: process.env.NEXT_PUBLIC_CLIENT_ID || "",
 });
@@ -194,6 +213,7 @@ export const implementation_contract = getContract({
     chain: base,
     address: process.env.NEXT_PUBLIC_IMPLEMENTATION || "",
 });
+
 
 
 export const pgc_1155_id_contract = getContract({

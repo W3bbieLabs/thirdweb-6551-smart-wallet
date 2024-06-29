@@ -11,6 +11,10 @@ import {
   get_tba_address,
   newSmartWallet,
   client,
+  active_chain_id,
+  get_generic_contract,
+  get_tba_owner,
+  create_tba_account,
 } from "../const/utils";
 
 type Props = {
@@ -32,21 +36,49 @@ export default function NFTComponent({ nft }: Props) {
     }
     setIsLoading(true);
     //console.log("creating smart wallet");
-    let token_bound_address = await get_tba_address(
-      nft,
-      registry_contract,
-      BigInt(process.env.NEXT_PUBLIC_CHAIN_ID!)
-    );
 
-    let smart_wallet = newSmartWallet(token_bound_address);
+    let smart_wallet = newSmartWallet();
     const smart_wallet_acount = await smart_wallet.connect({
       chain: base,
       client,
       personalAccount: account!,
     });
-    //console.log("smart_wallet", smart_wallet_acount);
-    setSmartWalletAddress(smart_wallet_acount.address);
-    setIsLoading(false);
+    //console.log("smart_wallet", smart_wallet_acount)
+
+    let token_bound_address = await get_tba_address(
+      nft,
+      registry_contract,
+      active_chain_id
+    );
+
+    let tba_contract = await get_generic_contract(token_bound_address);
+    console.log("tba_contract", tba_contract);
+
+    try {
+      let tba_owner = await get_tba_owner(tba_contract);
+      console.log("tba", token_bound_address, "tba_owner", tba_owner);
+      setSmartWalletAddress(token_bound_address);
+      setIsLoading(false);
+    } catch (e) {
+      //console.log("error", e);
+      console.log("creating TBA account.");
+
+      // No ownder found, create TBA account
+      let tx = await create_tba_account(
+        account!,
+        nft,
+        registry_contract,
+        active_chain_id
+      );
+      console.log("tx", tx);
+
+      setTimeout(async () => {
+        let tba_owner = await get_tba_owner(tba_contract);
+        console.log("tba", token_bound_address, "tba_owner", tba_owner);
+        setSmartWalletAddress(token_bound_address);
+        setIsLoading(false);
+      }, 3000);
+    }
   };
 
   const viewSmartWallet = () => {
