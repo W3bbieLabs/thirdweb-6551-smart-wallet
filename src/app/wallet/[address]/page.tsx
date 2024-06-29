@@ -2,7 +2,7 @@
 import { useSearchParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { ThirdwebClient, NFT } from "thirdweb";
-import { baseSepolia } from "thirdweb/chains";
+import { base } from "thirdweb/chains";
 import { allow_list } from "@/app/const/constants";
 import { Container } from "@/app/components/Container";
 import { useActiveAccount, MediaRenderer } from "thirdweb/react";
@@ -123,7 +123,7 @@ export default function WalletPage({
     setTokenBoundAddress(token_bound_address);
     let smart_wallet = newSmartWallet(token_bound_address);
     const smart_wallet_acount = await smart_wallet.connect({
-      chain: baseSepolia,
+      chain: base,
       client,
       personalAccount: account!,
     });
@@ -189,7 +189,7 @@ export default function WalletPage({
                 </Button>
               </div>
               <Link
-                href={`https://sepolia.basescan.org/address/${params.address}`}
+                href={`https://basescan.org/address/${params.address}`}
                 target="_blank"
               >
                 <Button

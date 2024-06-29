@@ -6,37 +6,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTheme } from "next-themes";
-import { ConnectWallet } from "@thirdweb-dev/react";
+//import { ConnectWallet } from "@thirdweb-dev/react";
 import MobileNavigation from "./MobileNavigation";
 import { ConnectButton } from "thirdweb/react";
-import { createWallet } from "thirdweb/wallets";
-import { baseSepolia } from "thirdweb/chains";
-import { CreateThirdwebClientOptions } from "thirdweb";
+//import { createWallet } from "thirdweb/wallets";
+import { baseSepolia, base } from "thirdweb/chains";
+//import { CreateThirdwebClientOptions } from "thirdweb";
 import { client, wallets } from "../const/utils";
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
 import { createThirdwebClient, defineChain } from "thirdweb";
 
-/*
-const wallets = [
-  createWallet("com.coinbase.wallet"),
-  createWallet("io.metamask"),
-];
-*/
-
 export function Header() {
   const { theme } = useTheme();
+  //console.log("chain", process.env.NEXT_PUBLIC_CHAIN_ID);
+
+  //const active_chain = defineChain(process.env.NEXT_PUBLIC_CHAIN_ID || 8453  );
 
   if (!CLIENT_ID) {
     throw new Error("CLIENT_ID is not defined in environment variables");
   }
-
-  /*
-  const client = createThirdwebClient({
-    clientId: CLIENT_ID,
-    secretKey: undefined,
-  });
-  */
 
   return (
     <header className="">
@@ -76,7 +65,7 @@ export function Header() {
               <ConnectButton
                 client={client}
                 wallets={wallets}
-                chain={defineChain(baseSepolia)}
+                chain={defineChain(base)}
                 theme={"dark"}
                 appMetadata={{
                   name: "Avatar",

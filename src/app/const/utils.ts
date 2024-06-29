@@ -9,7 +9,7 @@ import { createWallet, injectedProvider } from "thirdweb/wallets";
 import { WalletId } from "thirdweb/wallets";
 import { getOwnedNFTs } from "thirdweb/extensions/erc1155";
 import { SmartWalletOptions } from "thirdweb/wallets";
-import { baseSepolia } from "thirdweb/chains";
+import { base } from "thirdweb/chains";
 import {
     implementation,
     nftDropAddress,
@@ -40,7 +40,7 @@ export async function get_wallet_id(): Promise<string> {
     for (let i = 0; i < supported_wallets.length; i++) {
         let wallet: WalletId = supported_wallets[i];
         if (injectedProvider(wallet)) {
-            console.log("detected wallet: ", wallet)
+            //console.log("detected wallet: ", wallet)
             return wallet
             //return create_account(wallet)
         }
@@ -66,13 +66,13 @@ export const fetchNFTs = async (walletAddress: string, contract: Readonly<Contra
         count: 10,
         address: walletAddress,
     });
-    console.log("Owned NFTs:", ownedNFTs);
+    //console.log("Owned NFTs:", ownedNFTs);
     return ownedNFTs
 };
 
 export const newSmartWallet = (token_bound_address: string) => {
     const config: SmartWalletOptions = {
-        chain: baseSepolia,
+        chain: base,
         sponsorGas: true,
         factoryAddress: factoryAddress,
         overrides: {
@@ -93,7 +93,7 @@ export const get_tba_address = async (nft: any, registry_contract: Readonly<Cont
             "function account( address implementation, uint256 chainId, address tokenContract, uint256 tokenId, uint256 salt) view returns (address)",
         params: [implementation, chain_id, nftDropAddress, BigInt(id), 0n],
     });
-    console.log("get_tba_address():", tba_address);
+    //console.log("get_tba_address():", tba_address);
     return tba_address;
 };
 
@@ -128,19 +128,19 @@ export const client = createThirdwebClient({
 
 export const bounded_token_contract = getContract({
     client,
-    chain: baseSepolia,
+    chain: base,
     address: NFT_COLLECTION_ADDRESS!,
 });
 
 export const registry_contract = getContract({
     client,
-    chain: baseSepolia,
+    chain: base,
     address: process.env.NEXT_PUBLIC_FACTORY_ADDRESS || "",
 });
 
 export const pgc_1155_id_contract = getContract({
     client,
-    chain: baseSepolia,
+    chain: base,
     address: process.env.NEXT_PUBLIC_ID_NFT || "", // deploy a drop contract from thirdweb.com/explore
 });
 

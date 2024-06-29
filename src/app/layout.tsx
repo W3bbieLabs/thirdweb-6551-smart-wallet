@@ -1,10 +1,7 @@
 "use client";
 import { Inter } from "next/font/google";
 import "./globals.css";
-//import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { ThirdwebProvider } from "thirdweb/react";
-import { BaseSepoliaTestnet } from "@thirdweb-dev/chains";
-import { clientId } from "./const/constants";
 import { Header } from "./components/Header";
 import { ThemeProvider } from "next-themes";
 

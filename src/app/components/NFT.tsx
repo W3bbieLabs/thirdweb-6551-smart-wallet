@@ -1,6 +1,6 @@
 import { createThirdwebClient, NFT } from "thirdweb";
 import React, { useState } from "react";
-import { baseSepolia } from "thirdweb/chains";
+import { baseSepolia, base } from "thirdweb/chains";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "./v0/NFT/card";
 import { Badge } from "./v0/badge";
@@ -31,7 +31,7 @@ export default function NFTComponent({ nft }: Props) {
       return;
     }
     setIsLoading(true);
-    console.log("creating smart wallet");
+    //console.log("creating smart wallet");
     let token_bound_address = await get_tba_address(
       nft,
       registry_contract,
@@ -40,11 +40,11 @@ export default function NFTComponent({ nft }: Props) {
 
     let smart_wallet = newSmartWallet(token_bound_address);
     const smart_wallet_acount = await smart_wallet.connect({
-      chain: baseSepolia,
+      chain: base,
       client,
       personalAccount: account!,
     });
-    console.log("smart_wallet", smart_wallet_acount);
+    //console.log("smart_wallet", smart_wallet_acount);
     setSmartWalletAddress(smart_wallet_acount.address);
     setIsLoading(false);
   };
@@ -74,7 +74,7 @@ export default function NFTComponent({ nft }: Props) {
       <CardContent className="flex flex-col items-start p-4 space-y-2">
         <div className="flex justify-between w-full">
           <div className="text-lg font-semibold">{nft.metadata.name}</div>
-          <Badge variant="outline">#{nft.metadata.id}</Badge>
+          <Badge variant="outline">#{nft.id.toString()}</Badge>
         </div>
         {isLoading ? (
           <p className="text-blue-500 text-center w-full">Connecting...</p>
