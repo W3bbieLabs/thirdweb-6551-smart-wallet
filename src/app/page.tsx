@@ -59,7 +59,7 @@ export default function Home() {
             <a
               href="https://avatar-basedart.vercel.app/"
               target="_blank"
-              className="dark:text-blue-600 text-foreground-dark"
+              className="text-blue-500"
             >
               here
             </a>{" "}
