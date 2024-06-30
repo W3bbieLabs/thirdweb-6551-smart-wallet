@@ -51,10 +51,7 @@ export function Header() {
             <NavLink href="https://x.com/PublicGoodsClub" target="_blank">
               Community
             </NavLink>
-            <NavLink
-              href="https://mirror.xyz/bigtrav.eth/6hD4LTjGWC8TXef4DGIxbdVSibreKLTWila-wOku0DM"
-              target="_blank"
-            >
+            <NavLink href="https://publicgoods.club/" target="_blank">
               Learn
             </NavLink>
             <NavLink href="/"> My NFTs</NavLink>

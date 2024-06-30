@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-background-light dark:bg-background-dark min-h-screen">
         <ThirdwebProvider>
-          <ThemeProvider attribute="class">
+          <ThemeProvider attribute="class" defaultTheme="light">
             <Header />
             <main className="flex-grow">{children}</main>
           </ThemeProvider>
