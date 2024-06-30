@@ -1,28 +1,34 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import { ThirdwebClient, NFT } from "thirdweb";
+import { ThirdwebClient, NFT, getContract } from "thirdweb";
 import { base } from "thirdweb/chains";
-import { allow_list } from "@/app/const/constants";
+import { allow_list, implementation } from "@/app/const/constants";
 import { Container } from "@/app/components/Container";
 import { useActiveAccount, MediaRenderer } from "thirdweb/react";
 import { Badge } from "@/app/components/v0/badge";
 import { Button } from "@/app/components/v0/button";
 import { Card, CardContent } from "@/app/components/v0/NFT/card";
 import Link from "next/link";
+import { claimTo } from "thirdweb/extensions/erc1155";
+
 import {
   fetchNFTs,
   get_tba_address,
   newSmartWallet,
   claim,
+  create_tba_account,
+  get_generic_contract,
 } from "@/app/const/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation"; // Adjusted to use Next.js 13 client-side navigation
 import {
   client,
   registry_contract,
+  implementation_contract,
   pgc_1155_id_contract,
   active_chain_id,
+  get_tba_owner,
 } from "@/app/const/utils";
 
 function CopyIcon(
@@ -115,30 +121,19 @@ export default function WalletPage({
   }, [params.address]);
 
   const claimToken = async () => {
-    let token_bound_address = await get_tba_address(
-      nft,
-      registry_contract,
-      active_chain_id
-    );
-    setTokenBoundAddress(token_bound_address);
-    let smart_wallet = newSmartWallet(token_bound_address);
-    const smart_wallet_acount = await smart_wallet.connect({
-      chain: base,
-      client,
-      personalAccount: account!,
-    });
+    console.log("claiming token");
     let currency = process.env.NEXT_PUBLIC_CURRENCY || "";
     let transactionResult = await claim(
       pgc_1155_id_contract,
       account!,
-      smart_wallet_acount?.address,
+      params.address,
       0n,
       1n,
       currency,
       allow_list,
       "0x"
     );
-    // Temp fix to reload data
+    // Temp fix to reload data after tx
     setTimeout(() => window.location.reload(), 1000);
   };
 
